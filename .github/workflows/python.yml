@@ -40,4 +40,4 @@ jobs:
       working-directory: "python"
       run: |
         coverage run -m pytest
-        coverage report
+        coverage report --fail-under 90
