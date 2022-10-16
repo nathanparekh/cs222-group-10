@@ -1,22 +1,18 @@
-package cli
+package tests
 
 import (
-	"database/sql"
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func TestCanOpenDB(t *testing.T) {
-	db, err := sql.Open("sqlite3", "python/gpa_dataset.db")
+// This is what a test would look like for our CLI
+func TestCoursesCommand(t *testing.T) {
+	// we would call the function that runs in the CLI command
+	// commandOut := courses_command()
 
-	if err != nil {
-		t.Errorf("could not open database")
+	// and check if it has the desired output
+	if false {
+		t.Errorf("command doesn't match desired output")
 	}
-
-	db.Close()
-}
-
-func TestInvalidGETThrowsError(t *testing.T) {
-
 }
