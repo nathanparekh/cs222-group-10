@@ -3,7 +3,8 @@ from xml.etree import ElementTree
 
 # Course Information Suite (CIS) API docs - https://courses.illinois.edu/cisdocs/
 
-def fetch_schedule_history_as_json():  # returns info on every course offering accessible through the CIS API
+# Returns info on every course accessible through the CIS API; takes several hours
+def fetch_schedule_history_as_json():
     # request for a list of school years offered by the CIS API
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule.xml'
     res = requests.get(endpoint)
@@ -20,6 +21,7 @@ def fetch_schedule_history_as_json():  # returns info on every course offering a
 
     return schedule
 
+# Returns courses within a given school year; takes over 1 hour
 def fetch_year_as_json(year):
     # request for the semesters of this school year
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}.xml'.format(year)
@@ -35,6 +37,7 @@ def fetch_year_as_json(year):
 
     return semesters
 
+# Returns courses within a given semester; takes over 30 mins for spring/fall semesters
 def fetch_semester_as_json(year, semester):
     # request for subjects taught in this semester
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}.xml'.format(year, semester)
@@ -50,6 +53,7 @@ def fetch_semester_as_json(year, semester):
 
     return subjects
 
+# Returns courses within a givin subject and semester
 def fetch_subj_as_json(year, semester, subj_code):
     # request for course offerings of this subject
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}.xml'.format(year, semester, subj_code)
@@ -64,6 +68,7 @@ def fetch_subj_as_json(year, semester, subj_code):
 
     return courses
 
+# Returns course
 def fetch_course_as_json(year, semester, subj_code, course_num):
     # request for information about the course offering
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}.xml'.format(year, semester, subj_code.upper(), course_num)
@@ -87,6 +92,7 @@ def fetch_course_as_json(year, semester, subj_code, course_num):
     course.update({'sections': sections})
     return course
 
+# Returns section within a course
 def fetch_section_as_json(year, semester, subj_code, course_num, crn):
     # request for information about the course section
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}/{}.xml'.format(year, semester, subj_code.upper(), course_num, crn)
