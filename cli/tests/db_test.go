@@ -8,7 +8,7 @@ import (
 )
 
 func TestCanOpenDB(t *testing.T) {
-	db, err := sql.Open("sqlite3", "python/gpa_dataset.db")
+	db, err := sql.Open("sqlite3", "../../python/gpa_dataset.db")
 
 	if err != nil {
 		t.Errorf("could not open database")
