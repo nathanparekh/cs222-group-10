@@ -18,9 +18,7 @@ var departmentCmd = &cobra.Command{
 	Use:   "department",
 	Short: "gets course listing for department",
 	Long:  `Gets the list of courses available for the provided department (ex. CS or CWL or ECON)`,
-	Run: func(cmd *cobra.Command, args []string) {
-		departmentFunc(cmd, args)
-	},
+	Run: 	departmentFunc,
 }
 
 func init() {
