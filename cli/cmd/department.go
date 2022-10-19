@@ -9,13 +9,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func departmentFunc(cmd *cobra.Command, args []string) {
+	fmt.Println("Course listing for " + args[0])
+}
+
 // departmentCmd represents the department command
 var departmentCmd = &cobra.Command{
 	Use:   "department",
 	Short: "gets course listing for department",
 	Long:  `Gets the list of courses available for the provided department (ex. CS or CWL or ECON)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Course listing for " + args[0])
+		departmentFunc(cmd, args)
 	},
 }
 

@@ -9,13 +9,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func coursesFunc(cmd *cobra.Command, args []string) {
+	fmt.Println("Entire list of courses")
+}
+
 // coursesCmd represents the courses command
 var coursesCmd = &cobra.Command{
 	Use:   "courses",
 	Short: "Lists all courses",
 	Long:  `Entire listing of courses for the University of Illinois at Urbana-Champaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Entire list of courses")
+		coursesFunc(cmd, args)
 	},
 }
 
