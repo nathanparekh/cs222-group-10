@@ -18,7 +18,7 @@ var coursesCmd = &cobra.Command{
 	Use:   "courses",
 	Short: "Lists all courses",
 	Long:  `Entire listing of courses for the University of Illinois at Urbana-Champaign`,
-	Run: coursesFunc,
+	Run:   coursesFunc,
 }
 
 func init() {
