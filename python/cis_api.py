@@ -3,12 +3,76 @@ from xml.etree import ElementTree
 
 # Course Information Suite (CIS) API docs - https://courses.illinois.edu/cisdocs/
 
+# Returns info on every course accessible through the CIS API; takes several hours
+def fetch_schedule_history_as_json():
+    # request for a list of school years offered by the CIS API
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule.xml'
+    res = requests.get(endpoint)
+
+    # parse the XML response into an ElementTree
+    root = ElementTree.fromstring(res.content)
+
+    # build the entire schedule JSON obj
+    schedule = {}
+    for year_elem in root.iter('calendarYear'):
+        year = year_elem.attrib.get('id')
+        semesters = fetch_year_as_json(year)
+        schedule.update({year: semesters})
+
+    return schedule
+
+# Returns courses within a given school year; takes over 1 hour
+def fetch_year_as_json(year):
+    # request for the semesters of this school year
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}.xml'.format(year)
+    res = requests.get(endpoint)
+    root = ElementTree.fromstring(res.content)
+
+    # build school year JSON obj
+    semesters = {}
+    for sem_elem in root.iter('term'):
+        semester = sem_elem.text.split()[0]
+        subjects = fetch_semester_as_json(year, semester)
+        semesters.update({sem: subjects})
+
+    return semesters
+
+# Returns courses within a given semester; takes over 30 mins for spring/fall semesters
+def fetch_semester_as_json(year, semester):
+    # request for subjects taught in this semester
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}.xml'.format(year, semester)
+    res = requests.get(endpoint)
+    root = ElementTree.fromstring(res.content)
+
+    # build semester JSON obj, comprised of each subject mapped to its course offerings
+    subjects = {}
+    for subj_elem in root.iter('subject'):
+        subj_code = subj_elem.attrib.get('id')
+        courses = fetch_subj_as_json(year, semester, subj_code)
+        subjects.update({subj_code: courses})
+
+    return subjects
+
+# Returns courses within a givin subject and semester
+def fetch_subj_as_json(year, semester, subj_code):
+    # request for course offerings of this subject
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}.xml'.format(year, semester, subj_code)
+    res = requests.get(endpoint)
+    root = ElementTree.fromstring(res.content)
+
+    # build array of course JSON objs
+    courses = []
+    for course_elem in root.iter('course'):
+        course = fetch_course_as_json(year, semester, subj_code, course_elem.attrib.get('id'))
+        courses.append(course)
+
+    return courses
+
+# Returns course
 def fetch_course_as_json(year, semester, subj_code, course_num):
     # request for information about the course offering
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}.xml'.format(year, semester, subj_code.upper(), course_num)
     res = requests.get(endpoint)
-
-    # parse the XML response into an ElementTree
     root = ElementTree.fromstring(res.content)
 
     # build the course JSON obj
@@ -22,15 +86,16 @@ def fetch_course_as_json(year, semester, subj_code, course_num):
     # iterate through the course sections
     sections = []
     for section_elem in root.iter('section'):
-        section = fetch_section_as_json(section_elem)
+        section = fetch_section_as_json(year, semester, subj_code, course_num, section_elem.attrib.get('id'))
         sections.append(section)
 
     course.update({'sections': sections})
     return course
 
-def fetch_section_as_json(section_elem):
+# Returns section within a course
+def fetch_section_as_json(year, semester, subj_code, course_num, crn):
     # request for information about the course section
-    endpoint = section_elem.attrib.get('href')
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}/{}.xml'.format(year, semester, subj_code.upper(), course_num, crn)
     res = requests.get(endpoint)
     root = ElementTree.fromstring(res.content)
 
@@ -67,7 +132,3 @@ def fetch_section_as_json(section_elem):
 
     section.update({'meetings': meetings})
     return section
-
-
-# course = fetch_course_as_json('2022', 'Fall', 'CS', '225')
-# print(course)
