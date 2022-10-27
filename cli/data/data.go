@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -16,8 +17,16 @@ type Course struct {
 	Number   int
 }
 
-func GetCourseByNum(subject string, num int) Course {
+func GetCourseByNum(subject string, num int) (Course, error) {
 	db, err := sql.Open("sqlite3", "../../python/gpa_dataset.db")
+
+	if subject == "" {
+		return Course{}, errors.New("empty subject")
+	}
+
+	if num < 0 || num > 799 {
+		return Course{}, errors.New("number out of range")
+	}
 
 	if err != nil {
 		fmt.Println(err)
@@ -27,11 +36,15 @@ func GetCourseByNum(subject string, num int) Course {
 		fmt.Println(err)
 	}
 	db.Close()
-	return course
+	return course, nil
 }
 
-func GetCourseByName(name string) Course {
+func GetCourseByName(name string) (Course, error) {
 	db, err := sql.Open("sqlite3", "../../python/gpa_dataset.db")
+
+	if name == "" {
+		return Course{}, errors.New("empty course name")
+	}
 
 	if err != nil {
 		fmt.Println(err)
@@ -41,5 +54,5 @@ func GetCourseByName(name string) Course {
 		fmt.Println(err)
 	}
 	db.Close()
-	return course
+	return course, nil
 }

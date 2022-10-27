@@ -2,7 +2,6 @@ package tests
 
 import (
 	"database/sql"
-	//"fmt"
 	"testing"
 
 	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
@@ -40,8 +39,11 @@ func TestCourseDataIntegrity(t *testing.T) {
 }
 
 func TestGetCourseByNum(t *testing.T) {
-	var course data.Course = data.GetCourseByNum("CS", 225)
+	course, err := data.GetCourseByNum("CS", 225)
 
+	if err != nil {
+		t.Errorf("error when getting course")
+	}
 	if course.Name != "Data Structures" {
 		t.Errorf("incorrect name")
 	}
@@ -60,8 +62,11 @@ func TestGetCourseByNum(t *testing.T) {
 }
 
 func TestGetCourseByName(t *testing.T) {
-	var course data.Course = data.GetCourseByName("Data Structures")
+	course, err := data.GetCourseByName("Data Structures")
 
+	if err != nil {
+		t.Errorf("error when getting course")
+	}
 	if course.Name != "Data Structures" {
 		t.Errorf("incorrect name")
 	}
