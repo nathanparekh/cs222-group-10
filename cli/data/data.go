@@ -24,7 +24,7 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 		return Course{}, errors.New("empty subject")
 	}
 
-	if num < 100 || num > 999 {
+	if num < 0 || num > 799 {
 		return Course{}, errors.New("number out of range")
 	}
 

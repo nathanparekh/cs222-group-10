@@ -2,7 +2,6 @@ package tests
 
 import (
 	"database/sql"
-	//"fmt"
 	"testing"
 
 	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
