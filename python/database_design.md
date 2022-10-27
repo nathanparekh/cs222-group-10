@@ -80,3 +80,26 @@ Below we specify each column of each table by its name, description, type (SQLit
 | instructor_id | Primary key of the instructor | INTEGER | 2825122 |
 
 A meeting (i.e. lecture or lab) and an instructor make a class. This is a junction table that defines the many-to-many relationship between meetings and instructors.
+
+### GPA_Entry
+
+| Column Name | Description | Type | Example |
+|-------------|-------------|------|---------|
+| id | Primary key | INTEGER | 7599854 |
+| course_id | Primary key of the corresponding course | INTEGER | 9813204 |
+| instructor_id | Primary key of the main instructor | INTEGER | 2825122 |
+| sched_type | Schedule type | TEXT | LEC |
+| a_plus | Number of students who received an A+ | INTEGER | 8 |
+| a | A | INTEGER | 241 |
+| a_minus | A- | INTEGER | 14 |
+| b_plus | B+ | INTEGER | 22 |
+| b | B | INTEGER | 15 |
+| b_minus | B- | INTEGER | 6 |
+| c_plus | C+ | INTEGER | 10 |
+| c | C | INTEGER | 4 |
+| c_minus | C- | INTEGER | 6 |
+| d_plus | D+ | INTEGER | 5 |
+| d | D | INTEGER | 1 |
+| d_minus | D- | INTEGER | 3 |
+| f | F | INTEGER | 10 |
+| w | W | INTEGER | 5 |
