@@ -4,44 +4,35 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/blockloop/scan"
 	"github.com/spf13/cobra"
+
+	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
 )
 
 func course(cmd *cobra.Command, args []string) {
-	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
-
+	var course data.Course
+	var err error
+	if len(args) == 1 { // argument is probably a course name
+		course, err = data.GetCourseByName(args[0])
+	} else if len(args) == 2 { // argument is probably a course subject and number
+		number, atoi_err := strconv.Atoi(args[1])
+		if atoi_err != nil {
+			log.Fatal("Not a valid course number")
+		}
+		course, err = data.GetCourseByNum(args[0], number)
+	}
 	if err != nil {
+		log.Fatal("Error getting course:")
 		fmt.Println(err.Error())
-		log.Fatal("DB error")
+	} else {
+		fmt.Println(course)
 	}
-	query := `SELECT Subject FROM courses WHERE "Course Title" = @title;`
-	courses, err := db.Query(query, args[0])
-
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error getting courses")
-	}
-	var course string
-	err = scan.Row(&course, courses)
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error parsing data")
-	}
-	jsonCourse, err := json.Marshal(course)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(jsonCourse))
-	// fmt.Println(courses)
-	db.Close()
 }
 
 // coursesCmd represents the courses command

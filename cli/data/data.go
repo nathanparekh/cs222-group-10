@@ -18,7 +18,7 @@ type Course struct {
 }
 
 func GetCourseByNum(subject string, num int) (Course, error) {
-	db, err := sql.Open("sqlite3", "../../python/gpa_dataset.db")
+	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
 
 	if subject == "" {
 		return Course{}, errors.New("empty subject")
@@ -40,7 +40,7 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 }
 
 func GetCourseByName(name string) (Course, error) {
-	db, err := sql.Open("sqlite3", "../../python/gpa_dataset.db")
+	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
 
 	if name == "" {
 		return Course{}, errors.New("empty course name")
