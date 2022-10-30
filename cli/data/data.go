@@ -28,6 +28,14 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 		return Course{}, errors.New("number out of range")
 	}
 
+	if subject == "" {
+		return Course{}, errors.New("empty subject")
+	}
+
+	if num < 0 || num > 799 {
+		return Course{}, errors.New("number out of range")
+	}
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -41,6 +49,10 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 
 func GetCourseByName(name string) (Course, error) {
 	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
+
+	if name == "" {
+		return Course{}, errors.New("empty course name")
+	}
 
 	if name == "" {
 		return Course{}, errors.New("empty course name")
