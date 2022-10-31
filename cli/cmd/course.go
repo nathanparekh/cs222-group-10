@@ -18,18 +18,20 @@ import (
 func course(cmd *cobra.Command, args []string) {
 	var course data.Course
 	var err error
-	if len(args) == 1 { // argument is probably a course name
+	if len(args) == 0 {
+		log.Fatal("No arguments passed. Command usage: either a subject and number (ex CS 225) or a course name (ex \"Data Structures\")")
+	} else if len(args) == 1 { // argument is probably a course name
 		course, err = data.GetCourseByName(args[0])
 	} else if len(args) == 2 { // argument is probably a course subject and number
 		number, atoi_err := strconv.Atoi(args[1])
 		if atoi_err != nil {
-			log.Fatal("Not a valid course number")
+			log.Fatal("Not a valid course number.")
 		}
 		course, err = data.GetCourseByNum(args[0], number)
 	}
 	if err != nil {
-		log.Fatal("Error getting course:")
 		fmt.Println(err.Error())
+		log.Fatal("Error getting course")
 	} else {
 		fmt.Println(course)
 	}

@@ -3,7 +3,6 @@ package data
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -37,11 +36,11 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 	}
 
 	if err != nil {
-		fmt.Println(err)
+		return Course{}, errors.New(err.Error())
 	}
 	var course Course
 	if err := db.QueryRow("SELECT * FROM courses WHERE Subject=@subject AND Number=@num", subject, num).Scan(&course.Year, &course.Term, &course.YearTerm, &course.Subject, &course.Number, &course.Name); err != nil {
-		fmt.Println(err)
+		return Course{}, errors.New(err.Error())
 	}
 	db.Close()
 	return course, nil
@@ -59,11 +58,11 @@ func GetCourseByName(name string) (Course, error) {
 	}
 
 	if err != nil {
-		fmt.Println(err)
+		return Course{}, errors.New(err.Error())
 	}
 	var course Course
 	if err := db.QueryRow("SELECT * FROM courses WHERE `Course Title`=@name", name).Scan(&course.Year, &course.Term, &course.YearTerm, &course.Subject, &course.Number, &course.Name); err != nil {
-		fmt.Println(err)
+		return Course{}, errors.New(err.Error())
 	}
 	db.Close()
 	return course, nil
