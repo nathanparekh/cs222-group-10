@@ -33,7 +33,7 @@ def fetch_year_as_json(year):
     for sem_elem in root.iter('term'):
         semester = sem_elem.text.split()[0]
         subjects = fetch_semester_as_json(year, semester)
-        semesters.update({sem: subjects})
+        semesters.update({semester: subjects})
 
     return semesters
 
@@ -71,7 +71,8 @@ def fetch_subj_as_json(year, semester, subj_code):
 # Returns course
 def fetch_course_as_json(year, semester, subj_code, course_num):
     # request for information about the course offering
-    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}.xml'.format(year, semester, subj_code.upper(), course_num)
+    endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}.xml'.format(year, 
+                                                                                              semester, subj_code.upper(), course_num)
     res = requests.get(endpoint)
     root = ElementTree.fromstring(res.content)
 

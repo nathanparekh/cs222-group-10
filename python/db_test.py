@@ -19,7 +19,7 @@ def test_gpa_size():
     connection = sqlite3.connect("gpa_dataset.db")
     df = pd.read_sql('SELECT * FROM gpa', connection)
     cols = list(df)
-    assert len(cols) == 17
+    assert len(cols) == 22
     assert len(df[cols[0]]) == 61557
     for i in range(1, len(cols)):
         assert df[cols[0]].size == df[cols[i]].size
