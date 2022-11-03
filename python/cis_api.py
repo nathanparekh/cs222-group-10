@@ -72,7 +72,7 @@ def fetch_subj_as_json(year, semester, subj_code):
 def fetch_course_as_json(year, semester, subj_code, course_num):
     # request for information about the course offering
     endpoint = 'https://courses.illinois.edu/cisapp/explorer/schedule/{}/{}/{}/{}.xml'.format(year, 
-                                                                                              ter, subj_code.upper(), course_num)
+                                                                                              semester, subj_code.upper(), course_num)
     res = requests.get(endpoint)
     root = ElementTree.fromstring(res.content)
 
