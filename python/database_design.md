@@ -33,7 +33,7 @@ Below we specify each column of each table by its name, description, type (SQLit
 | behav_sci | Fulfills Behavioral Science | INTEGER | 0 |
 | social_sci | Fulfills Advanced Composition | INTEGER | 0 |
 | section_info | Other information about the course | TEXT | Credit is not given for CS 277 if credit for CS 225 has been earned. Prerequisite: ... |
-| degree_attributes | Information about fulfilled degree requirements | TEXT | Quantitative Reasoning II course. |
+| degree_attribs | Information about fulfilled degree requirements | TEXT | Quantitative Reasoning II course. |
 | schedule_info | Information about registration | TEXT | Students must register for one lecture-discussion and one lecture section. |
 
 ### Section
