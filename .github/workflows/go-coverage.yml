@@ -15,6 +15,7 @@ jobs:
 
     - name: Install dependencies
       run: go get .
+      working-directory: cli
 
     - name: Set up Go
       uses: actions/setup-go@v3
@@ -23,3 +24,4 @@ jobs:
 
     - name: Coverage
       run: go test -v -cover ./...
+      working-directory: cli
