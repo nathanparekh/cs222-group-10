@@ -44,9 +44,10 @@ Below we specify each column of each table by its name, description, type (SQLit
 | course_id | Primary key of the course this section is listed under | INTEGER | 9813204 |
 | crn | Section CRN | INTEGER | 65054 |
 | number | Section number | TEXT | ABA |
+| description | Section text | TEXT | LAPTOP LAB SECTION -- Students are required to ... |
 | status_code | Status code | TEXT | A |
 | sect_status_code | Section status code | TEXT | A |
-| part_of_term | Part of term | TEXT | 1 |
+| part_of_term | Part of term | TEXT | 1 or A |
 | enrollment_status | Enrollment status | TEXT | Open |
 | start_date | Start date | TEXT | 2022-08-22Z |
 | end_date | End date | TEXT | 2022-12-07Z |
@@ -61,7 +62,7 @@ Below we specify each column of each table by its name, description, type (SQLit
 | start_time | Start time | TEXT | 09:00 AM |
 | end_time | End time | TEXT | 10:50 AM |
 | days_of_week | Which days this meeting convenes | TEXT | R |
-| room_num | Room number of meeting location | INTEGER | 4029 |
+| room_num | Room number of meeting location | TEXT | 4029 or AUD |
 | building_name | Building name of meeting location | TEXT | Campus Instructional Facility |
 
 ### Instructor
