@@ -9,11 +9,11 @@ import (
 )
 
 type Course struct {
-	Name     string
-	Year     int
-	Term     string
-	Subject  string
-	Number   int
+	Name    string
+	Year    int
+	Term    string
+	Subject string
+	Number  int
 }
 
 func GetCourseByNum(subject string, num int) (Course, error) {

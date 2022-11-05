@@ -12,7 +12,6 @@ import (
 func TestCanOpenDB(t *testing.T) {
 	db, _ := sql.Open("sqlite3", "../../python/course.db")
 	err := db.Ping()
-
 	if err != nil {
 		t.Errorf("could not open database")
 	}
@@ -28,7 +27,6 @@ func TestCourseDataIntegrity(t *testing.T) {
 	}
 
 	cols, err := courses.Columns()
-
 	if err != nil {
 		t.Errorf("error parsing columns")
 	}
@@ -41,7 +39,6 @@ func TestCourseDataIntegrity(t *testing.T) {
 
 func TestGetCourseByNum(t *testing.T) {
 	course, err := data.GetCourseByNum("ACE", 161)
-
 	if err != nil {
 		t.Errorf("error when getting course")
 	}
@@ -64,7 +61,6 @@ func TestGetCourseByNum(t *testing.T) {
 
 func TestGetCourseByName(t *testing.T) {
 	course, err := data.GetCourseByName("Microcomputer Applications")
-
 	if err != nil {
 		t.Errorf("error when getting course")
 	}
