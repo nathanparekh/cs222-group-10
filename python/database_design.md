@@ -12,7 +12,7 @@ Below we specify each column of each table by its name, description, type (SQLit
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| id | Primary key | INTEGER | 9813204 |
+| id | Version 4 UUID (Primary key) | TEXT | ffb094c2-e9b5-450a-88a3-51249195ec63 |
 | year | Year of this course offering | INTEGER | 2022 |
 | term | Term of this course offering | TEXT | Fall |
 | subject | Subject code | TEXT | CS |
@@ -40,8 +40,8 @@ Below we specify each column of each table by its name, description, type (SQLit
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| id | Primary key | INTEGER | 5648151 |
-| course_id | Primary key of the course this section is listed under | INTEGER | 9813204 |
+| id | Version 4 UUID (Primary key) | TEXT | ea5f9915-1d10-4d73-a133-8f337437fc6a |
+| course_id | Primary key of the course this section is listed under | TEXT | ffb094c2-e9b5-450a-88a3-51249195ec63 |
 | crn | Section CRN | INTEGER | 65054 |
 | number | Section number | TEXT | ABA |
 | description | Section text | TEXT | LAPTOP LAB SECTION -- Students are required to ... |
@@ -56,8 +56,8 @@ Below we specify each column of each table by its name, description, type (SQLit
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| id | Primary key | INTEGER | 0871456 |
-| section_id | Primary key of the section of this meeting | INTEGER | 5648151 |
+| id | Version 4 UUID (Primary key) | TEXT | 052a8875-9dc4-47b4-a676-522743873ca3 |
+| section_id | Primary key of the section of this meeting | TEXT | ea5f9915-1d10-4d73-a133-8f337437fc6a |
 | type | Meeting type | TEXT | Laboratory-Discussion |
 | start_time | Start time | TEXT | 09:00 AM |
 | end_time | End time | TEXT | 10:50 AM |
@@ -69,7 +69,7 @@ Below we specify each column of each table by its name, description, type (SQLit
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| id | Primary key | INTEGER | 2825122 |
+| id | Version 4 UUID (Primary key) | TEXT | bfe81e58-7b97-4675-b713-4000b9a6d978 |
 | first_name | First name | TEXT | C |
 | last_name | Last name | TEXT | Evans |
 
@@ -77,8 +77,8 @@ Below we specify each column of each table by its name, description, type (SQLit
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| meeting_id | Primary key of the meeting | INTEGER | 0871456 |
-| instructor_id | Primary key of the instructor | INTEGER | 2825122 |
+| meeting_id | Primary key of the meeting | TEXT | 052a8875-9dc4-47b4-a676-522743873ca3 |
+| instructor_id | Primary key of the instructor | TEXT | bfe81e58-7b97-4675-b713-4000b9a6d978 |
 
 A meeting (i.e. lecture or lab) and an instructor make a class. This is a junction table that defines the many-to-many relationship between meetings and instructors.
 
