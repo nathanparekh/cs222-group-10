@@ -5,7 +5,7 @@ import pandas as pd
 # ensure columns are all the same length
 # correct number of columns
 def test_courses_size():
-    connection = sqlite3.connect("gpa_dataset.db")
+    connection = sqlite3.connect('course.db')
     df = pd.read_sql('SELECT * FROM courses', connection)
     cols = list(df)
     assert len(cols) == 6
@@ -16,7 +16,7 @@ def test_courses_size():
 
 # ensure columns are all the same length
 def test_gpa_size():
-    connection = sqlite3.connect("gpa_dataset.db")
+    connection = sqlite3.connect('course.db')
     df = pd.read_sql('SELECT * FROM gpa', connection)
     cols = list(df)
     assert len(cols) == 22
@@ -26,8 +26,7 @@ def test_gpa_size():
     connection.close()
 
 def test_no_course_duplicates():
-    connection = sqlite3.connect("gpa_dataset.db")
+    connection = sqlite3.connect('course.db')
     df = pd.read_sql('SELECT * FROM courses', connection)
     assert len(df['Course Title'].unique()) == df['Course Title'].size
     connection.close()
-
