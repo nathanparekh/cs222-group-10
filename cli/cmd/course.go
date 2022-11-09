@@ -4,8 +4,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -15,23 +15,30 @@ import (
 	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
 )
 
-func course(cmd *cobra.Command, args []string) {
-	var course data.Course
-	var err error
+func getCourse(args []string) (data.Course, error) {
 	if len(args) == 0 {
-		log.Fatal("No arguments passed. Command usage: either a subject and number (ex CS 225) or a course name (ex \"Data Structures\")")
+
 	} else if len(args) == 1 { // argument is probably a course name
-		course, err = data.GetCourseByName(args[0])
+		return data.GetCourseByName(args[0])
 	} else if len(args) == 2 { // argument is probably a course subject and number
-		number, atoi_err := strconv.Atoi(args[1])
-		if atoi_err != nil {
-			log.Fatal("Not a valid course number.")
+		number, err := strconv.Atoi(args[1])
+		if err != nil {
+			return data.Course{}, errors.New("given course number is not a number")
 		}
-		course, err = data.GetCourseByNum(args[0], number)
+		return data.GetCourseByNum(args[0], number)
 	}
+
+	return data.Course{}, errors.New("malformed arguments")
+}
+
+func printCourse(cmd *cobra.Command, args []string) {
+	course, err := getCourse(args)
+
 	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error getting course")
+		fmt.Println("Error getting course:", err)
+		fmt.Println("Usage:")
+		fmt.Println("course [course name] to get a course by name (eg. course \"Data Structures\")")
+		fmt.Println("course [subject] [number] to get a course by number (eg. course CS 225)")
 	} else {
 		fmt.Println(course)
 	}
@@ -42,7 +49,7 @@ var courseCmd = &cobra.Command{
 	Use:   "course",
 	Short: "Lists a course",
 	Long:  `When passed a specific course, prints its details`,
-	Run:   course,
+	Run:   printCourse,
 }
 
 func init() {
