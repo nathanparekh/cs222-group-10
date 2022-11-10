@@ -8,16 +8,15 @@ import (
 )
 
 type Course struct {
-	Name     string
-	Year     int
-	Term     string
-	YearTerm string
-	Subject  string
-	Number   int
+	Name    string
+	Year    int
+	Term    string
+	Subject string
+	Number  int
 }
 
 func GetCourseByNum(subject string, num int) (Course, error) {
-	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
+	db, err := sql.Open("sqlite3", "../../python/course.db")
 
 	if subject == "" {
 		return Course{}, errors.New("empty subject")
@@ -39,7 +38,7 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 		return Course{}, errors.New(err.Error())
 	}
 	var course Course
-	if err := db.QueryRow("SELECT * FROM courses WHERE Subject=@subject AND Number=@num", subject, num).Scan(&course.Year, &course.Term, &course.YearTerm, &course.Subject, &course.Number, &course.Name); err != nil {
+	if err := db.QueryRow("SELECT year, term, subject, number, name FROM Course WHERE subject=@subject AND number=@num", subject, num).Scan(&course.Year, &course.Term, &course.Subject, &course.Number, &course.Name); err != nil {
 		return Course{}, errors.New(err.Error())
 	}
 	db.Close()
@@ -47,7 +46,7 @@ func GetCourseByNum(subject string, num int) (Course, error) {
 }
 
 func GetCourseByName(name string) (Course, error) {
-	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
+	db, err := sql.Open("sqlite3", "../../python/course.db")
 
 	if name == "" {
 		return Course{}, errors.New("empty course name")
@@ -61,7 +60,7 @@ func GetCourseByName(name string) (Course, error) {
 		return Course{}, errors.New(err.Error())
 	}
 	var course Course
-	if err := db.QueryRow("SELECT * FROM courses WHERE `Course Title`=@name", name).Scan(&course.Year, &course.Term, &course.YearTerm, &course.Subject, &course.Number, &course.Name); err != nil {
+	if err := db.QueryRow("SELECT year, term, subject, number, name FROM Course WHERE `name`=@name", name).Scan(&course.Year, &course.Term, &course.Subject, &course.Number, &course.Name); err != nil {
 		return Course{}, errors.New(err.Error())
 	}
 	db.Close()
