@@ -4,44 +4,43 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"database/sql"
-	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/blockloop/scan"
 	"github.com/spf13/cobra"
+
+	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
 )
 
-func course(cmd *cobra.Command, args []string) {
-	db, err := sql.Open("sqlite3", "../python/gpa_dataset.db")
+func getCourse(args []string) (data.Course, error) {
+	if len(args) == 0 {
+	} else if len(args) == 1 { // argument is probably a course name
+		return data.GetCourseByName(args[0])
+	} else if len(args) == 2 { // argument is probably a course subject and number
+		number, err := strconv.Atoi(args[1])
+		if err != nil {
+			return data.Course{}, errors.New("given course number is not a number")
+		}
+		return data.GetCourseByNum(args[0], number)
+	}
+
+	return data.Course{}, errors.New("malformed arguments")
+}
+
+func printCourse(cmd *cobra.Command, args []string) {
+	course, err := getCourse(args)
 
 	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("DB error")
+		fmt.Println("Error getting course:", err)
+		fmt.Println("Usage:")
+		fmt.Println("course [course name] to get a course by name (eg. course \"Data Structures\")")
+		fmt.Println("course [subject] [number] to get a course by number (eg. course CS 225)")
+	} else {
+		fmt.Println(course)
 	}
-	query := `SELECT Subject FROM courses WHERE "Course Title" = @title;`
-	courses, err := db.Query(query, args[0])
-
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error getting courses")
-	}
-	var course string
-	err = scan.Row(&course, courses)
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error parsing data")
-	}
-	jsonCourse, err := json.Marshal(course)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(jsonCourse))
-	// fmt.Println(courses)
-	db.Close()
 }
 
 // coursesCmd represents the courses command
@@ -49,7 +48,7 @@ var courseCmd = &cobra.Command{
 	Use:   "course",
 	Short: "Lists a course",
 	Long:  `When passed a specific course, prints its details`,
-	Run:   course,
+	Run:   printCourse,
 }
 
 func init() {
