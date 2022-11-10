@@ -17,7 +17,6 @@ import (
 
 func getCourse(args []string) (data.Course, error) {
 	if len(args) == 0 {
-
 	} else if len(args) == 1 { // argument is probably a course name
 		return data.GetCourseByName(args[0])
 	} else if len(args) == 2 { // argument is probably a course subject and number
