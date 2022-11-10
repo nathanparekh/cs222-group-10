@@ -5,7 +5,7 @@ import (
 )
 
 func TestValidName(t *testing.T) {
-	_, err := GetCourseByName("Data Structures")
+	_, err := GetCourseByName("Microcomputer Applications")
 
 	if err != nil {
 		t.Errorf("error when getting valid course")
@@ -19,7 +19,7 @@ func TestValidName(t *testing.T) {
 }
 
 func TestValidNumber(t *testing.T) {
-	_, err := GetCourseByNum("CS", 225)
+	_, err := GetCourseByNum("ACE", 161)
 
 	if err != nil {
 		t.Errorf("error when getting valid course")
