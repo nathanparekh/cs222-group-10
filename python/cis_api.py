@@ -97,6 +97,8 @@ def fetch_course_as_json(year, semester, subj_code, course_num):  # Returns cour
         elem = root.find(tag)
         if (elem is not None):
             course.update({tag_aliases[idx]: elem.text.strip()})
+        else:
+            course.update({tag_aliases[idx]: None})
 
     geneds = ['1CLL', '1NW', '1US', '1WCC', '1HP', '1LA',
               '1LS', '1PS', '1QR1', '1QR2', '1BSC', '1SS']
