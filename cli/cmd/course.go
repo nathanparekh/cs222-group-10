@@ -12,19 +12,21 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
+	"github.com/CS222-UIUC/course-project-group-10.git/data"
 )
 
 func getCourse(args []string) (data.Course, error) {
 	if len(args) == 0 {
 	} else if len(args) == 1 { // argument is probably a course name
-		return data.GetCourseByName(args[0])
+		courses, err := data.GetCoursesByName(args[0], 1)
+		return courses[0], err
 	} else if len(args) == 2 { // argument is probably a course subject and number
 		number, err := strconv.Atoi(args[1])
 		if err != nil {
 			return data.Course{}, errors.New("given course number is not a number")
 		}
-		return data.GetCourseByNum(args[0], number)
+		courses, err := data.GetCoursesByNum(args[0], number, 1)
+		return courses[0], err
 	}
 
 	return data.Course{}, errors.New("malformed arguments")
