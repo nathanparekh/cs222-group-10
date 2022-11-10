@@ -86,7 +86,7 @@ A meeting (i.e. lecture or lab) and an instructor make a class. This is a juncti
 
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
-| id | Primary key | INTEGER | 7599854 |
+| id | Version 4 UUID (Primary key) | INTEGER | e92f76eb-a0a1-459a-b0e4-eef4f6ea7034 |
 | course_id | Primary key of the corresponding course | INTEGER | 9813204 |
 | instructor_id | Primary key of the main instructor | INTEGER | 2825122 |
 | sched_type | Schedule type | TEXT | LEC |
