@@ -36,9 +36,14 @@ func historyFunc(cmd *cobra.Command, args []string) {
 
 	// read in flags
 	latest, err := cmd.Flags().GetBool("latest")
+	if err != nil {
+		fmt.Println("flag would not be read", err)
+	}
 	oldest, err := cmd.Flags().GetBool("oldest")
+	if err != nil {
+		fmt.Println("flag would not be read", err)
+	}
 	num, err := cmd.Flags().GetInt("number")
-
 	if err != nil {
 		fmt.Println("flag would not be read", err)
 	}
