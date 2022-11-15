@@ -29,3 +29,7 @@ jobs:
     - name: Test
       run: go test -v ./...
       working-directory: cli
+
+    - name: Test data
+      run: go test -v ./data
+
