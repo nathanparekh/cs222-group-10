@@ -26,10 +26,10 @@ jobs:
       run: go build -v ./...
       working-directory: cli
 
-    - name: Test
+    - name: Test cli directory
       run: go test -v ./...
       working-directory: cli
 
-    - name: Test data
+    - name: Test data directory
       run: go test -v ./data
 
