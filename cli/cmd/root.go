@@ -14,8 +14,8 @@ var rootCmd = &cobra.Command{
 	Use:   "course-project-group-10.git",
 	Short: "Get info about UIUC courses",
 	Long: `Command line tool for accessing information
-regarding courses at UIUC. Can list course details including
-meeting times, GPA data, fulfilled gen ed requirements, etc.`,
+	regarding courses at UIUC. Can list course details including
+	meeting times, GPA data, fulfilled gen ed requirements, etc.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
