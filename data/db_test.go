@@ -1,16 +1,15 @@
-package tests
+package data
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
-
-	"github.com/CS222-UIUC/course-project-group-10.git/cli/data"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestCanOpenDB(t *testing.T) {
-	db, _ := sql.Open("sqlite3", "../../python/course.db")
+	db, _ := sql.Open("sqlite3", "../python/course.db")
 	err := db.Ping()
 	if err != nil {
 		t.Errorf("could not open database")
@@ -20,7 +19,7 @@ func TestCanOpenDB(t *testing.T) {
 }
 
 func TestCourseDataIntegrity(t *testing.T) {
-	db, _ := sql.Open("sqlite3", "../../python/course.db")
+	db, _ := sql.Open("sqlite3", "../python/course.db")
 	courses, err := db.Query("SELECT * FROM Course")
 	if err != nil {
 		t.Errorf("couldn't query courses")
@@ -38,45 +37,47 @@ func TestCourseDataIntegrity(t *testing.T) {
 }
 
 func TestGetCourseByNum(t *testing.T) {
-	course, err := data.GetCourseByNum("ACE", 161)
+	course, err := GetCoursesByNum("ACE", 161, 1)
 	if err != nil {
 		t.Errorf("error when getting course")
+		fmt.Println(err)
 	}
-	if course.Name != "Microcomputer Applications" {
+	if course[0].Name != "Microcomputer Applications" {
 		t.Errorf("incorrect name")
 	}
-	if course.Year != 2022 {
+	if course[0].Year != 2022 {
 		t.Errorf("incorrect year")
 	}
-	if course.Term != "Winter" {
+	if course[0].Term != "Winter" {
 		t.Errorf("incorrect term")
 	}
-	if course.Subject != "ACE" {
+	if course[0].Subject != "ACE" {
 		t.Errorf("incorrect subject")
 	}
-	if course.Number != 161 {
+	if course[0].Number != 161 {
 		t.Errorf("incorrect name")
 	}
 }
 
 func TestGetCourseByName(t *testing.T) {
-	course, err := data.GetCourseByName("Microcomputer Applications")
+	course, err := GetCoursesByName("Microcomputer Applications", 1)
 	if err != nil {
 		t.Errorf("error when getting course")
+		fmt.Println(err)
 	}
-	if course.Name != "Microcomputer Applications" {
+	if course[0].Name != "Microcomputer Applications" {
 		t.Errorf("incorrect name")
 	}
-	if course.Year != 2022 {
+	if course[0].Year != 2022 {
 		t.Errorf("incorrect year")
 	}
-	if course.Term != "Winter" {
+	if course[0].Term != "Winter" {
 		t.Errorf("incorrect term")
 	}
-	if course.Subject != "ACE" {
+	if course[0].Subject != "ACE" {
 		t.Errorf("incorrect subject")
 	}
-	if course.Number != 161 {
+	if course[0].Number != 161 {
 		t.Errorf("incorrect name")
 	}
 }
