@@ -47,8 +47,11 @@ func printCourse(cmd *cobra.Command, args []string) {
 var courseCmd = &cobra.Command{
 	Use:   "course",
 	Short: "Lists a course",
-	Long:  `When passed a specific course, prints its details`,
-	Run:   printCourse,
+	Long: `When passed a specific course, prints its details.
+Usage:
+course [course name] to get a course by name (eg. course "Data Structures")
+course [subject] [number] to get a course by number (eg. course CS 225)`,
+	Run: printCourse,
 }
 
 func init() {
