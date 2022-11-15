@@ -37,7 +37,7 @@ func TestCourseDataIntegrity(t *testing.T) {
 }
 
 func TestGetCourseByNum(t *testing.T) {
-	course, err := GetCoursesByNum("ACE", 161, 1)
+	course, err := GetCourses(map[string]interface{}{"subject":"ACE", "number":161,}, "LIMIT 1")
 	if err != nil {
 		t.Errorf("error when getting course")
 		fmt.Println(err)
@@ -60,7 +60,7 @@ func TestGetCourseByNum(t *testing.T) {
 }
 
 func TestGetCourseByName(t *testing.T) {
-	course, err := GetCoursesByName("Microcomputer Applications", 1)
+	course, err := GetCourses(map[string]interface{}{"name":"Microcomputer Applications",}, "LIMIT 1")
 	if err != nil {
 		t.Errorf("error when getting course")
 		fmt.Println(err)
