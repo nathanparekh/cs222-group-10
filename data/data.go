@@ -120,20 +120,18 @@ type Instructor struct {
 
 // "clauses" is a string with optional additional statements you want to add to the end of a query
 // for example, if you want to sort by descending and only return 6 rows, pass
-// clauses := string{"ORDER BY year DESC LIMIT 6"}
+// clauses := "ORDER BY year DESC LIMIT 6"
 // if you want no additional statements, just pass an empty string
 func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error) {
 	var courses []Course
-	//queryDB := DB.Session(&gorm.Session{})
 	// this initializes the DB
-	queryDB := DB
+	queryDB := DB.Session(&gorm.Session{})
 
-	// build the query as a string, adding each key in the argsMap to the AND statement
-	// queryString looks like "columnName = @mapKey" where columnName is the name of the column we want to search and mapKey is the key to the value we want it to be
-	// if we built our map correctly, these should always be the same
 	queryString := ""
+	// build the query as a string, adding each key in the argsMap to the AND statement
 	for key, val := range argsMap {
 		// do error checking of fields that aren't ints
+		// this is the only part of the getter that we really need to edit when writing getters for different structs
 		if key != "number" && key != "year" {
 			if val == "" {
 				return courses, errors.New("field cannot be empty")
@@ -145,6 +143,10 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 				return courses, errors.New("number out of range")
 			}
 		}
+		// if error checks are successful, add the statement to the query
+		// queryString looks something like "columnName1 = @mapKey1 AND columnName2 = @mapKey2" 
+		// where columnName is the name of the column we want to search and mapKey is the key to the value we want it to be
+		// this is equivalent to the statement "SELECT * FROM course WHERE columnName1 = argsMap[mapKey1] AND columnName2 = argsMap[mapKey2]"
 		queryString += key + " = @" + key + " AND "
 	}
 	// remove the trailing " AND ""
@@ -178,4 +180,25 @@ func CoursesToString(courses []Course) string {
 	return output
 }
 
-//func GetInstructor
+func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, error) {
+	var sections []Section
+	queryDB := DB
+	queryString := ""
+	for key, val := range argsMap {
+		// check if crn is correct length
+		if key == "crn" {
+			if len(strconv.Itoa(val.(int))) != 5 {
+				return []Section{}, errors.New("invalid CRN")
+			}
+		}
+		queryString += key + " = @" + key + " AND "
+	}
+	// remove the trailing " AND ""
+	if len(argsMap) > 0 {
+		queryString = queryString[0 : len(queryString)-5]
+	}
+	// append any additional clauses to the end of query
+	queryString += " " + clauses
+	queryDB.Where(queryString, argsMap).Find(&sections)
+	return sections, nil
+}
