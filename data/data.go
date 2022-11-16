@@ -3,10 +3,9 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"strconv"
 
 	//"errors"
-
-	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 	"gorm.io/gorm"
@@ -23,15 +22,19 @@ type Tabler interface {
 func (Course) TableName() string {
 	return "course"
 }
+
 func (Section) TableName() string {
 	return "section"
 }
+
 func (Meeting) TableName() string {
 	return "meeting"
 }
+
 func (GPAEntry) TableName() string {
 	return "GPA_Entry"
 }
+
 func (Instructor) TableName() string {
 	return "instructor"
 }
@@ -144,7 +147,7 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 			}
 		}
 		// if error checks are successful, add the statement to the query
-		// queryString looks something like "columnName1 = @mapKey1 AND columnName2 = @mapKey2" 
+		// queryString looks something like "columnName1 = @mapKey1 AND columnName2 = @mapKey2"
 		// where columnName is the name of the column we want to search and mapKey is the key to the value we want it to be
 		// this is equivalent to the statement "SELECT * FROM course WHERE columnName1 = argsMap[mapKey1] AND columnName2 = argsMap[mapKey2]"
 		queryString += key + " = @" + key + " AND "
@@ -155,7 +158,7 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 	}
 	// append any additional clauses to the end of query
 	queryString += " " + clauses
-	//fmt.Println(queryString)
+	// fmt.Println(queryString)
 
 	// see section about Named Arguments to see how passing a map[string]interface{} works:
 	// https://gorm.io/docs/sql_builder.html#Raw-SQL

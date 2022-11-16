@@ -111,8 +111,8 @@ func TestGetCourseByName(t *testing.T) {
 }
 
 func TestGetSections(t *testing.T) {
-	section, err := GetSections(map[string]interface{}{"crn": 10105},"")
-	if (err != nil) {
+	section, err := GetSections(map[string]interface{}{"crn": 10105}, "")
+	if err != nil {
 		t.Errorf("error when getting section")
 	}
 	if section[0].StartDate != "2021-12-20Z" {

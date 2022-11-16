@@ -33,7 +33,7 @@ func historyFunc(cmd *cobra.Command, args []string) {
 	}
 
 	// initalize argsMap used by the getters
-	argsMap := map[string]interface{}{"subject": course[0].Subject, "number": course[0].Number,}
+	argsMap := map[string]interface{}{"subject": course[0].Subject, "number": course[0].Number}
 
 	// print depending on flags
 	if (latest || oldest) && num != -1 {
@@ -43,14 +43,14 @@ func historyFunc(cmd *cobra.Command, args []string) {
 		if oldest {
 			// if sorting by oldest, reverse the slice
 			fmt.Println("Sorting by oldest")
-			courses, err = data.GetCourses(argsMap, "ORDER BY year DESC" + " LIMIT " + strconv.Itoa(num))
+			courses, err = data.GetCourses(argsMap, "ORDER BY year DESC"+" LIMIT "+strconv.Itoa(num))
 			if err != nil {
 				fmt.Println(err.Error())
 				fmt.Println("could not get course")
 			}
 		} else if latest || num != -1 {
 			// just fetch the correct number of courses
-			courses, err = data.GetCourses(argsMap, "LIMIT "+ strconv.Itoa(num))
+			courses, err = data.GetCourses(argsMap, "LIMIT "+strconv.Itoa(num))
 			if err != nil {
 				fmt.Println(err.Error())
 				fmt.Println("could not get course")
@@ -85,12 +85,12 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	//var course string
+	// var course string
 	var latest bool
 	var oldest bool
 	var num int
 
-	//historyCmd.Flags().StringVarP(&course, "course", "c", "", "Course to find")
+	// historyCmd.Flags().StringVarP(&course, "course", "c", "", "Course to find")
 	historyCmd.Flags().BoolVarP(&latest, "latest", "l", false, "Sort by latest first")
 	historyCmd.Flags().BoolVarP(&oldest, "oldest", "o", false, "Sort by oldest first")
 	historyCmd.Flags().IntVarP(&num, "number", "n", 8, "Number of results to list")

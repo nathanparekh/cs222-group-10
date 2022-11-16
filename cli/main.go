@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	//set up database global variable
+	// set up database global variable
 	var err error
 	data.DB, err = gorm.Open(sqlite.Open("../python/course.db"), &gorm.Config{})
 	if err != nil {
