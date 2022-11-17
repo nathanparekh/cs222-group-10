@@ -8,7 +8,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "course-project-group-10.git",
+	Use:   os.Args[0],
 	Short: "Get info about UIUC courses",
 	Long: `Command line tool for accessing information
 regarding courses at UIUC. Can list course details including
