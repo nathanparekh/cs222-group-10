@@ -1,6 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -49,20 +46,13 @@ func printCourse(cmd *cobra.Command, args []string) {
 var courseCmd = &cobra.Command{
 	Use:   "course",
 	Short: "Lists a course",
-	Long:  `When passed a specific course, prints its details`,
-	Run:   printCourse,
+	Long: `When passed a specific course, prints its details.
+Usage:
+course [course name] to get a course by name (eg. course "Data Structures")
+course [subject] [number] to get a course by number (eg. course CS 225)`,
+	Run: printCourse,
 }
 
 func init() {
 	rootCmd.AddCommand(courseCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// coursesCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// coursesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
