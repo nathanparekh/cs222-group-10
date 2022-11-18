@@ -10,7 +10,7 @@ cursor = connection.cursor()
 
 # Replace Course, Section, Meeting, Instructor, Class tables in course.db
 # with courses of passed-in year & semester
-def make_courses_table(connection, year, semester):
+def make_courses_table(connection, year, semester, if_exists):
     courses = fetch_semester_as_json(year, semester)
     courses, sections, meetings, instructors, classes = courses_to_tables(
         courses)
@@ -21,11 +21,11 @@ def make_courses_table(connection, year, semester):
     instr_df = pd.DataFrame(instructors)
     class_df = pd.DataFrame(classes)
 
-    course_df.to_sql('Course', connection, if_exists='replace', index=False)
-    section_df.to_sql('Section', connection, if_exists='replace', index=False)
-    meeting_df.to_sql('Meeting', connection, if_exists='replace', index=False)
-    instr_df.to_sql('Instructor', connection, if_exists='replace', index=False)
-    class_df.to_sql('Class', connection, if_exists='replace', index=False)
+    course_df.to_sql('Course', connection, if_exists=if_exists, index=False)
+    section_df.to_sql('Section', connection, if_exists=if_exists, index=False)
+    meeting_df.to_sql('Meeting', connection, if_exists=if_exists, index=False)
+    instr_df.to_sql('Instructor', connection, if_exists=if_exists, index=False)
+    class_df.to_sql('Class', connection, if_exists=if_exists, index=False)
 
 
 # Convert array of courses to arrays of courses, sections, meetings, instructors, classes that follow the DB schema
@@ -72,9 +72,9 @@ def courses_to_tables(courses):
 
 
 # Replace GPA_Entry table in course.db based on contents of the csv
-def make_gpa_table(connection):
+def make_gpa_table(connection, file_name):
     # read csv
-    df = pd.read_csv("uiuc-gpa-dataset.csv")
+    df = pd.read_csv(file_name)
 
     # rename columns
     df.rename(columns={
@@ -95,10 +95,32 @@ def make_gpa_table(connection):
         'W': 'w'
     }, inplace=True)
 
-    # drop unnecessary columns
-    cols_to_drop = ['Year', 'Term', 'YearTerm', 'Subject',
-                    'Number', 'Course Title', 'Primary Instructor']
-    df.drop(cols_to_drop, axis='columns', inplace=True)
+    # add course_id, instructor_id
+    df.insert(0, 'course_id', 'None')
+    df.insert(1, 'instructor_id', 'None')
+    for idx, row in df.iterrows():
+        if row.Year >= 2020:  # the oldest data in course.db is from 2020
+            courses = pd.read_sql('SELECT * FROM Course WHERE year="{}" AND term="{}" AND subject="{}" AND number="{}" LIMIT 1'.format(
+                row.Year, row.Term, row.Subject, row.Number), connection)
+
+            if len(courses) > 0:
+                df.at[idx, 'course_id'] = courses.iloc[0].id
+
+            if not isinstance(row['Primary Instructor'], str):
+                # print('No instructor for', row.Year, row.Term, row.Subject, row.Number)
+                continue  # most likely means instructor field for this row of the CSV is blank
+
+            names = row['Primary Instructor'].split(',')
+            first_name = names[1].strip()[0]
+            last_name = names[0].strip()
+
+            instrs = pd.read_sql('SELECT id FROM Instructor WHERE first_name="{}" AND last_name="{}" LIMIT 1'.format(
+                first_name, last_name), connection)
+
+            if len(instrs) > 0:
+                df.at[idx, 'instructor_id'] = instrs.iloc[0].id
+            # else:  # TODO: some instructors' names are truncated in the CSV and will not be found, even if they exist in the Instructor table
+            #     print('No matches for', first_name, last_name, row.Year, row.Term, row.Subject, row.Number)
 
     # add UUID (Primary Key)
     uuids = []
@@ -106,7 +128,10 @@ def make_gpa_table(connection):
         uuids.append(str(uuid.uuid4()))
     df.insert(0, 'id', uuids)
 
-    # TODO: add course_id, instructor_id
+    # drop unnecessary columns
+    cols_to_drop = ['Year', 'Term', 'YearTerm', 'Subject',
+                    'Number', 'Course Title', 'Primary Instructor']
+    df.drop(cols_to_drop, axis='columns', inplace=True)
 
     # populate db
     df.to_sql('GPA_Entry', connection, if_exists='replace', index=False)
@@ -128,9 +153,8 @@ def make_gpa_table(connection):
     # """
     # )
 
-
-# make_courses_table(connection, '2022', 'Winter')
-# make_gpa_table(connection)
+# make_courses_table(connection, '2020', 'Winter', 'append')
+# make_gpa_table(connection, 'uiuc-gpa-dataset.csv')
 
 # df = pd.read_sql('SELECT * FROM Course', connection)
 # print(df.head())
@@ -144,5 +168,6 @@ def make_gpa_table(connection):
 # print(df.head())
 # df = pd.read_sql('SELECT * FROM GPA_Entry', connection)
 # print(df.head())
+
 
 connection.close()

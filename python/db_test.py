@@ -20,8 +20,7 @@ def test_columns():
     assert len(meetings.columns) == 8
     assert len(instructors.columns) == 3
     assert len(classes.columns) == 2
-    # TODO: when course_id, instructor_id is added to GPA entries in db init, uncomment this test
-    # assert len(gpa_entries.columns) == 18
+    assert len(gpa_entries.columns) == 18
 
     for table in [courses, sections, meetings, instructors, classes]:
         cols = table.columns
