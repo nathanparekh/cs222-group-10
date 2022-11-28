@@ -3,6 +3,7 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"reflect"
 	"strconv"
 
 	//"errors"
@@ -142,7 +143,13 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 		}
 		// do error checking for numbers
 		if key == "number" {
-			if val.(int) < 0 || val.(int) > 799 {
+			var value int
+			if reflect.TypeOf(val).String() == "string" {
+				value, _ = strconv.Atoi(val.(string))
+			} else {
+				value = val.(int)
+			}
+			if value < 0 || value > 799 {
 				return courses, errors.New("number out of range")
 			}
 		}
