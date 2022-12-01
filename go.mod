@@ -2,7 +2,16 @@ module github.com/CS222-UIUC/course-project-group-10.git
 
 go 1.19
 
-require github.com/mattn/go-sqlite3 v1.14.15
+require (
+	github.com/mattn/go-sqlite3 v1.14.15
+	gorm.io/driver/sqlite v1.4.3
+	gorm.io/gorm v1.24.1
+)
+
+require (
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+)
 
 require (
 	github.com/blockloop/scan v1.3.0

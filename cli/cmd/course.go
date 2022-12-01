@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -12,21 +11,17 @@ import (
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
 )
 
-func getCourse(args []string) (data.Course, error) {
+func getCourse(args []string) ([]data.Course, error) {
 	if len(args) == 0 {
 	} else if len(args) == 1 { // argument is probably a course name
-		courses, err := data.GetCoursesByName(args[0], 1)
-		return courses[0], err
+		course, err := data.GetCourses(map[string]interface{}{"name": args[0]}, "LIMIT 1")
+		return course, err
 	} else if len(args) == 2 { // argument is probably a course subject and number
-		number, err := strconv.Atoi(args[1])
-		if err != nil {
-			return data.Course{}, errors.New("given course number is not a number")
-		}
-		courses, err := data.GetCoursesByNum(args[0], number, 1)
-		return courses[0], err
+		course, err := data.GetCourses(map[string]interface{}{"subject": args[0], "number": args[1]}, "LIMIT 1")
+		return course, err
 	}
 
-	return data.Course{}, errors.New("malformed arguments")
+	return []data.Course{}, errors.New("malformed arguments")
 }
 
 func printCourse(cmd *cobra.Command, args []string) {
@@ -38,7 +33,7 @@ func printCourse(cmd *cobra.Command, args []string) {
 		fmt.Println("course [course name] to get a course by name (eg. course \"Data Structures\")")
 		fmt.Println("course [subject] [number] to get a course by number (eg. course CS 225)")
 	} else {
-		fmt.Println(course)
+		data.CoursesToString(course)
 	}
 }
 
