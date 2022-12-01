@@ -70,7 +70,7 @@ Below we specify each column of each table by its name, description, type (SQLit
 | Column Name | Description | Type | Example |
 |-------------|-------------|------|---------|
 | id | Version 4 UUID (Primary key) | TEXT | bfe81e58-7b97-4675-b713-4000b9a6d978 |
-| first_name | First name | TEXT | C |
+| first_name | First initial | TEXT | C |
 | last_name | Last name | TEXT | Evans |
 
 ### Class
