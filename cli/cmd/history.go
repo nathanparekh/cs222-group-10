@@ -8,8 +8,6 @@ import (
 	"strconv"
 
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
-
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
 )
 
