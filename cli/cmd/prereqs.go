@@ -6,9 +6,9 @@ package cmd
 import (
 	//"errors"
 	"fmt"
-	"strings"
-	"strconv"
 	"regexp"
+	"strconv"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -17,11 +17,10 @@ import (
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
 
 	"github.com/disiqueira/gotree"
-
 	//"github.com/k0kubun/pp/v3"
 )
 
-func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]data.Course) () {
+func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]data.Course) {
 	if _, ok := (*courseToPrereqs)[course]; ok {
 	  return  // if course is already in the map
 	}
@@ -41,10 +40,10 @@ func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]dat
 
 	// naively parse section info to find prerequisites:
 	for idx := range parts[:len(parts)-1] {
-		subject := parts[idx]  // possible subject
-		courseNum := parts[idx+1]  // possible course num
+		subject := parts[idx]     // possible subject
+		courseNum := parts[idx+1] // possible course num
 
-		re := regexp.MustCompile(`[^\w\s]`)  // remove punctuation
+		re := regexp.MustCompile(`[^\w\s]`) // remove punctuation
 		subject = string(re.ReplaceAll([]byte(subject), []byte("")))
 		courseNum = string(re.ReplaceAll([]byte(courseNum), []byte("")))
 
@@ -61,9 +60,9 @@ func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]dat
 	}
 }
 
-func fillPrereqTree(node *gotree.Tree, course data.Course, courseToPrereqs *map[data.Course][]data.Course) () {
+func fillPrereqTree(node *gotree.Tree, course data.Course, courseToPrereqs *map[data.Course][]data.Course) {
 	prereqs := (*courseToPrereqs)[course]
-	(*courseToPrereqs)[course] = []data.Course{}  // empty array to avoid cycles & repetitive subtrees
+	(*courseToPrereqs)[course] = []data.Course{} // empty array to avoid cycles & repetitive subtrees
 
 	for _, prereq := range prereqs {
 		prereqNode := (*node).Add(prereq.Subject + " " + strconv.Itoa(prereq.Number))
@@ -73,7 +72,6 @@ func fillPrereqTree(node *gotree.Tree, course data.Course, courseToPrereqs *map[
 
 func printPrereqs(cmd *cobra.Command, args []string) {
 	course, err := getCourse(args)
-
 	if err != nil {
 		fmt.Println("Error getting course:", err)
 		fmt.Println("Usage:")
