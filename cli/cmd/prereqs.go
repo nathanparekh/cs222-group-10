@@ -23,16 +23,20 @@ import (
 
 func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]data.Course) () {
 	if _, ok := (*courseToPrereqs)[course]; ok {
-	  return
+	  return  // if course is already in the map
 	}
 
-	prereqIdx := strings.Index(course.SectionInfo, "Prerequisite")
+	if !course.SectionInfo.Valid {
+		return  // if course does not have section info
+	}
+
+	prereqIdx := strings.Index(course.SectionInfo.String, "Prerequisite")
 
 	if prereqIdx == -1 {
-		return
+		return  // if section info does not contain "Prerequisite"
 	}
 
-	prereqInfo := course.SectionInfo[prereqIdx+14:]
+	prereqInfo := course.SectionInfo.String[prereqIdx+14:]
 	parts := strings.Split(prereqInfo, " ")
 
 	// naively parse section info to find prerequisites:
