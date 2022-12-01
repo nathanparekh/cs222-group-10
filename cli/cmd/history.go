@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
@@ -16,77 +15,59 @@ import (
 
 func historyFunc(cmd *cobra.Command, args []string) {
 	// read in course argument
-	var course []data.Course
-	var err error
-	if len(args) == 0 {
-		log.Fatal("No arguments passed. Command usage: either a subject and number (ex CS 225) or a course name (ex \"Data Structures\")")
-	} else if len(args) == 1 { // argument is probably a course name
-		course, err = data.GetCoursesByName(args[0], 1)
-	} else if len(args) == 2 { // argument is probably a course subject and number
-		number, atoi_err := strconv.Atoi(args[1])
-		if atoi_err != nil {
-			log.Fatal("Not a valid course number.")
-		}
-		course, err = data.GetCoursesByNum(args[0], number, 1)
-	}
+	course, err := getCourse(args)
 	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatal("Error getting course")
+		fmt.Println("Error getting course:", err)
+		fmt.Println("Usage:")
+		fmt.Println("course [course name] to get a course by name (eg. course \"Data Structures\")")
+		fmt.Println("course [subject] [number] to get a course by number (eg. course CS 225)")
+		return
 	}
 
 	// read in flags
-	latest, err := cmd.Flags().GetBool("latest")
-	if err != nil {
-		fmt.Println("flag would not be read", err)
-	}
-	oldest, err := cmd.Flags().GetBool("oldest")
-	if err != nil {
-		fmt.Println("flag would not be read", err)
-	}
+	latest, _ := cmd.Flags().GetBool("latest")
+	oldest, _ := cmd.Flags().GetBool("oldest")
 	num, err := cmd.Flags().GetInt("number")
 	if err != nil {
 		fmt.Println("flag would not be read", err)
 	}
 
+	// initalize argsMap used by the getters
+	argsMap := map[string]interface{}{"subject": course[0].Subject, "number": course[0].Number}
+
 	// print depending on flags
-	if latest || oldest || num != -1 {
+	if (latest || oldest) && num != -1 {
 		// get slice of all courses with specified number
 		var courses []data.Course
 		var err error
 		if oldest {
 			// if sorting by oldest, reverse the slice
 			fmt.Println("Sorting by oldest")
-			// reverse courses slice
-			courses, err = data.GetCoursesByNum(course[0].Subject, course[0].Number, 100)
+			courses, err = data.GetCourses(argsMap, "ORDER BY year DESC"+" LIMIT "+strconv.Itoa(num))
 			if err != nil {
 				fmt.Println(err.Error())
+				fmt.Println("could not get course")
 			}
-			var reversed []data.Course
-			for i := len(courses) - 1; i >= len(courses)-num; i-- {
-				reversed = append(reversed, courses[i])
-			}
-			courses = reversed
 		} else if latest || num != -1 {
-			courses, err = data.GetCoursesByNum(course[0].Subject, course[0].Number, num)
+			// just fetch the correct number of courses
+			courses, err = data.GetCourses(argsMap, "LIMIT "+strconv.Itoa(num))
 			if err != nil {
 				fmt.Println(err.Error())
+				fmt.Println("could not get course")
 			}
 		}
-		// if no --number flag was passed, set it to the length of the courses slice
-		// print the sorted results
-		for i := 0; i < len(courses); i++ {
-			output := data.CourseToString(courses[i])
-			fmt.Println(output)
-			for i := 0; i < len(output); i++ {
-				fmt.Print("-")
-			}
-			fmt.Println()
-		}
+		// print courses
+		fmt.Println(data.CoursesToString(courses))
 
 	} else {
 		// by default, just print latest
 		fmt.Println("Latest Offering: ")
-		fmt.Println(data.CourseToString(course[0]))
+		courses, err := data.GetCourses(argsMap, "LIMIT 1")
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("could not get course")
+		}
+		fmt.Println(data.CoursesToString(courses))
 	}
 }
 
@@ -104,12 +85,12 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	//var course string
+	// var course string
 	var latest bool
 	var oldest bool
 	var num int
 
-	//historyCmd.Flags().StringVarP(&course, "course", "c", "", "Course to find")
+	// historyCmd.Flags().StringVarP(&course, "course", "c", "", "Course to find")
 	historyCmd.Flags().BoolVarP(&latest, "latest", "l", false, "Sort by latest first")
 	historyCmd.Flags().BoolVarP(&oldest, "oldest", "o", false, "Sort by oldest first")
 	historyCmd.Flags().IntVarP(&num, "number", "n", 8, "Number of results to list")

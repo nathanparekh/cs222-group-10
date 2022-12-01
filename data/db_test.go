@@ -2,7 +2,6 @@ package data
 
 import (
 	"database/sql"
-	"fmt"
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -34,50 +33,4 @@ func TestCourseDataIntegrity(t *testing.T) {
 		t.Errorf("incorrect number of columns")
 	}
 	db.Close()
-}
-
-func TestGetCourseByNum(t *testing.T) {
-	course, err := GetCoursesByNum("ACE", 161, 1)
-	if err != nil {
-		t.Errorf("error when getting course")
-		fmt.Println(err)
-	}
-	if course[0].Name != "Microcomputer Applications" {
-		t.Errorf("incorrect name")
-	}
-	if course[0].Year != 2022 {
-		t.Errorf("incorrect year")
-	}
-	if course[0].Term != "Winter" {
-		t.Errorf("incorrect term")
-	}
-	if course[0].Subject != "ACE" {
-		t.Errorf("incorrect subject")
-	}
-	if course[0].Number != 161 {
-		t.Errorf("incorrect name")
-	}
-}
-
-func TestGetCourseByName(t *testing.T) {
-	course, err := GetCoursesByName("Microcomputer Applications", 1)
-	if err != nil {
-		t.Errorf("error when getting course")
-		fmt.Println(err)
-	}
-	if course[0].Name != "Microcomputer Applications" {
-		t.Errorf("incorrect name")
-	}
-	if course[0].Year != 2022 {
-		t.Errorf("incorrect year")
-	}
-	if course[0].Term != "Winter" {
-		t.Errorf("incorrect term")
-	}
-	if course[0].Subject != "ACE" {
-		t.Errorf("incorrect subject")
-	}
-	if course[0].Number != 161 {
-		t.Errorf("incorrect name")
-	}
 }
