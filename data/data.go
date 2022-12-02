@@ -250,7 +250,10 @@ func GetGPAEntry(argsMap map[string]interface{}, clauses string) ([]GPAEntry, er
 		defer rows.Close()
 		for rows.Next() {
 			var gpa GPAEntry
-			queryDB.ScanRows(rows, &gpa)
+			err = queryDB.ScanRows(rows, &gpa)
+			if err != nil {
+				return gpas, err
+			}
 			gpas = append(gpas, gpa)
 		}
 	} else {
