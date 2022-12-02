@@ -223,6 +223,7 @@ func GetInstructors(argsMap map[string]interface{}, clauses string) ([]Instructo
 	queryDB.Where(queryString, argsMap).Find(&instructors)
 	return instructors, nil
 }
+
 func GetGPAEntry(argsMap map[string]interface{}, clauses string) ([]GPAEntry, error) {
 	var gpas []GPAEntry
 	// this initializes the DB
@@ -269,6 +270,7 @@ func CoursesToString(courses []Course) string {
 	}
 	return output
 }
+
 func PrintGpas(gpas []GPAEntry) {
 	if len(gpas) == 0 {
 		return
