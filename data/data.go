@@ -3,11 +3,12 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"reflect"
 	"strconv"
 
 	//"errors"
-
+	"github.com/gookit/color"
 	_ "github.com/mattn/go-sqlite3"
 	"gorm.io/gorm"
 )
@@ -41,6 +42,7 @@ func (Instructor) TableName() string {
 }
 
 type Course struct {
+	Id            string         `gorm:"primaryKey"`
 	Name          string         `db:"name"`
 	Year          int            `db:"year"`
 	Term          string         `db:"term"`
@@ -66,7 +68,7 @@ type Course struct {
 }
 
 type Section struct {
-	Id               int            `db:"id"`
+	Id               int            `gorm:"primaryKey"`
 	CourseId         int            `db:"course_id"`
 	CRN              int            `db:"crn"`
 	SectionNumber    string         `db:"section_number"`
@@ -90,26 +92,28 @@ type Meeting struct {
 }
 
 type GPAEntry struct {
-	Id        string `db:"id"`
-	SchedType string `db:"sched_type"`
-	APlus     int    `db:"a_plus"`
-	A         int    `db:"a"`
-	AMinus    int    `db:"a_minus"`
-	BPlus     int    `db:"b_plus"`
-	B         int    `db:"b"`
-	BMinus    int    `db:"b_minus"`
-	CPlus     int    `db:"c_plus"`
-	C         int    `db:"c"`
-	CMinus    int    `db:"c_minus"`
-	DPlus     int    `db:"d_plus"`
-	D         int    `db:"d"`
-	DMinus    int    `db:"d_minus"`
-	F         int    `db:"f"`
-	W         int    `db:"w"`
+	Id           string `gorm:"primaryKey"`
+	CourseId     string
+	InstructorId string
+	SchedType    string `db:"sched_type"`
+	APlus        int    `db:"a_plus"`
+	A            int    `db:"a"`
+	AMinus       int    `db:"a_minus"`
+	BPlus        int    `db:"b_plus"`
+	B            int    `db:"b"`
+	BMinus       int    `db:"b_minus"`
+	CPlus        int    `db:"c_plus"`
+	C            int    `db:"c"`
+	CMinus       int    `db:"c_minus"`
+	DPlus        int    `db:"d_plus"`
+	D            int    `db:"d"`
+	DMinus       int    `db:"d_minus"`
+	F            int    `db:"f"`
+	W            int    `db:"w"`
 }
 
 type Instructor struct {
-	Id        string `db:"id"`
+	Id        string `gorm:"primaryKey"`
 	FirstName string `db:"first_name"`
 	LastName  string `db:"last_name"`
 }
@@ -138,7 +142,7 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 		// this is the only part of the getter that we really need to edit when writing getters for different structs
 		if key != "number" && key != "year" {
 			if val == "" {
-				return courses, errors.New("field cannot be empty")
+				return courses, errors.New("GetCourses field \"" + key + "\" cannot be empty")
 			}
 		}
 		// do error checking for numbers
@@ -177,19 +181,6 @@ func GetCourses(argsMap map[string]interface{}, clauses string) ([]Course, error
 	return courses, nil
 }
 
-func CoursesToString(courses []Course) string {
-	var output string
-	for _, course := range courses {
-		curr_line := "| " + course.Term + " " + strconv.Itoa(course.Year) + "\t| " + course.Subject + " " + strconv.Itoa(course.Number) + " | " + course.Name + "\n"
-		output += curr_line
-		for i := 0; i < len(curr_line); i++ {
-			output += "-"
-		}
-		output += "\n"
-	}
-	return output
-}
-
 func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, error) {
 	var sections []Section
 	queryDB := DB
@@ -211,4 +202,121 @@ func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, err
 	queryString += " " + clauses
 	queryDB.Where(queryString, argsMap).Find(&sections)
 	return sections, nil
+}
+
+func GetInstructors(argsMap map[string]interface{}, clauses string) ([]Instructor, error) {
+	var instructors []Instructor
+	// this initializes the DB
+	queryDB := DB.Session(&gorm.Session{})
+
+	queryString := ""
+	// build the query as a string, adding each key in the argsMap to the AND statement
+	for key := range argsMap {
+		queryString += key + " = @" + key + " AND "
+	}
+	// remove the trailing " AND ""
+	if len(argsMap) > 0 {
+		queryString = queryString[0 : len(queryString)-5]
+	}
+	// append any additional clauses to the end of query
+	queryString += " " + clauses
+	queryDB.Where(queryString, argsMap).Find(&instructors)
+	return instructors, nil
+}
+func GetGPAEntry(argsMap map[string]interface{}, clauses string) ([]GPAEntry, error) {
+	var gpas []GPAEntry
+	// this initializes the DB
+	queryDB := DB.Session(&gorm.Session{})
+
+	queryString := ""
+	// build the query as a string, adding each key in the argsMap to the AND statement
+	for key := range argsMap {
+		queryString += key + " = @" + key + " AND "
+	}
+	// remove the trailing " AND ""
+	if len(argsMap) > 0 {
+		queryString = queryString[0 : len(queryString)-5]
+	}
+	// append any additional clauses to the end of query
+	queryString += " " + clauses
+	if len(argsMap) > 0 {
+		queryDB.Where(queryString, argsMap).Find(&gpas)
+	} else if len(clauses) > 0 {
+		// if argsmap is empty, assume using just raw sql
+		rows, err := queryDB.Raw(queryString).Rows()
+		if err != nil {
+			return gpas, err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var gpa GPAEntry
+			queryDB.ScanRows(rows, &gpa)
+			gpas = append(gpas, gpa)
+		}
+	} else {
+		return gpas, errors.New("must pass non-empty arguments")
+	}
+
+	return gpas, nil
+}
+
+func CoursesToString(courses []Course) string {
+	var output string
+	hline := "------------------------------------------------------\n"
+	for _, course := range courses {
+		curr_line := "| " + course.Term + " " + strconv.Itoa(course.Year) + "\t| " + course.Subject + " " + strconv.Itoa(course.Number) + " | " + course.Name + "\n"
+		output += curr_line + hline
+	}
+	return output
+}
+func PrintGpas(gpas []GPAEntry) {
+	if len(gpas) == 0 {
+		return
+	}
+
+	var hline string = "----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
+	fmt.Print("| Term\t\t| A+\t| A\t| A-\t| B+\t| B\t| B-\t| C+\t| C\t| C-\t| D+\t| D\t| D-\t| F\t| W\t| Avg\t| Instructor\n" + hline)
+	for _, entry := range gpas {
+		course, err := GetCourses(map[string]interface{}{"id": entry.CourseId}, "")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		instructor, err := GetInstructors(map[string]interface{}{"id": entry.InstructorId}, "")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		size := GetClassSize(entry)
+		g := reflect.ValueOf(entry)
+		fmt.Print("| " + course[0].Term + " " + strconv.Itoa(course[0].Year) + "\t|")
+		// average gpa
+		var gpa float64
+		// iterate through the fields of the struct (APlus is the 4th field, W is the last)
+		for i := 4; i < g.NumField(); i++ {
+			// print the percentage (float64)
+			percentage := float64(g.Field(i).Int()) / size * 100
+			// add up gpa points (as we increment i, each letter grade is 0.33 less than the previous one, offset by 4 since we start at i=4
+			// multiply it by the number of students with that grade, we divide by total students at the very end)
+			gpa += (4.0 - ((float64(i) - 4.0) * 0.33)) * float64(g.Field(i).Int())
+			if percentage <= 0 {
+				color.Gray.Printf(strconv.FormatFloat(percentage, 'f', 2, 32))
+			} else if percentage < 10 {
+				color.Red.Printf(strconv.FormatFloat(percentage, 'f', 2, 32))
+			} else if percentage < 40 {
+				color.Yellow.Printf(strconv.FormatFloat(percentage, 'f', 2, 32))
+			} else {
+				color.Green.Printf(strconv.FormatFloat(percentage, 'f', 2, 32))
+			}
+			fmt.Print("%\t|")
+		}
+		gpa = gpa / size
+		fmt.Print(strconv.FormatFloat(gpa, 'f', 2, 64) + "\t| " + instructor[0].FirstName + " " + instructor[0].LastName + "\n" + hline)
+
+	}
+}
+
+// given a gpa entry, return the total number of students who took that class
+func GetClassSize(x GPAEntry) float64 {
+	return float64(x.APlus + x.A + x.AMinus + x.BPlus + x.B + x.BMinus + x.CPlus + x.C + x.CMinus + x.DPlus + x.D + x.DMinus + x.F + x.W)
 }

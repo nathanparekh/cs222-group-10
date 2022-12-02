@@ -14,10 +14,10 @@ import (
 func getCourse(args []string) ([]data.Course, error) {
 	if len(args) == 0 {
 	} else if len(args) == 1 { // argument is probably a course name
-		course, err := data.GetCourses(map[string]interface{}{"name": args[0]}, "LIMIT 1")
+		course, err := data.GetCourses(map[string]interface{}{"name": args[0]}, "")
 		return course, err
 	} else if len(args) == 2 { // argument is probably a course subject and number
-		course, err := data.GetCourses(map[string]interface{}{"subject": args[0], "number": args[1]}, "LIMIT 1")
+		course, err := data.GetCourses(map[string]interface{}{"subject": args[0], "number": args[1]}, "")
 		return course, err
 	}
 
