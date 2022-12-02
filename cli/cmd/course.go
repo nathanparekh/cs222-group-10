@@ -4,11 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/spf13/cobra"
-
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
+	"github.com/spf13/cobra"
 )
 
 func getCourse(args []string) ([]data.Course, error) {
