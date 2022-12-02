@@ -60,7 +60,7 @@ func gpaFunc(cmd *cobra.Command, args []string) {
 			fmt.Println("Sorting by oldest")
 			// reverse slice
 			var reversed []data.GPAEntry
-			for i := len(gpas)-1; i >= 0; i-- {
+			for i := len(gpas) - 1; i >= 0; i-- {
 				reversed = append(reversed, gpas[i])
 				fmt.Println(gpas[i])
 			}

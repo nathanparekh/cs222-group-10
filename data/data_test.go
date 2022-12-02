@@ -122,10 +122,10 @@ func TestGetSections(t *testing.T) {
 
 func TestGetGPAEntry(t *testing.T) {
 	entries, err := GetGPAEntry(map[string]interface{}{}, "")
-	if (len(entries) != 0 || err == nil) {
+	if len(entries) != 0 || err == nil {
 		t.Errorf("should not allow empty arguments")
 	}
-	_, err = GetGPAEntry(map[string]interface{}{"course_id": "7764684e-7b86-4587-a89a-1d2605939263",}, "")
+	_, err = GetGPAEntry(map[string]interface{}{"course_id": "7764684e-7b86-4587-a89a-1d2605939263"}, "")
 	if err != nil {
 		t.Errorf("error when getting gpa entries")
 	}
