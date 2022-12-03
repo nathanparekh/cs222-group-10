@@ -66,17 +66,17 @@ type Course struct {
 }
 
 type Section struct {
-	Id               int            `db:"id"`
-	CourseId         int            `db:"course_id"`
 	CRN              int            `db:"crn"`
-	SectionNumber    string         `db:"section_number"`
+	SectionNumber    string         `db:"number"`
 	StatusCode       string         `db:"status_code"`
-	SectStatusCode   string         `db:"sect_status_code"`
+	Description      sql.NullString `db:"description"`
 	PartOfTerm       string         `db:"part_of_term"`
+	SectStatusCode   string         `db:"sect_status_code"`
 	EnrollmentStatus string         `db:"enrollment_status"`
 	StartDate        string         `db:"start_date"`
 	EndDate          string         `db:"end_date"`
-	Description      sql.NullString `db:"description"`
+	Id               string         `db:"id"`
+	CourseId         string         `db:"course_id"`
 }
 
 type Meeting struct {
@@ -209,6 +209,65 @@ func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, err
 	}
 	// append any additional clauses to the end of query
 	queryString += " " + clauses
-	queryDB.Where(queryString, argsMap).Find(&sections)
+	subQuery := queryDB.Table("course").Select("id").Where(queryString, argsMap)
+	queryDB.Where("course_id = (?)", subQuery).Find(&sections)
 	return sections, nil
 }
+
+func GetSectionIdSubquery(argsMap map[string]interface{}, clauses string) (*gorm.DB, error) {
+	queryDB := DB.Session(&gorm.Session{})
+	queryString := ""
+	for key, val := range argsMap {
+		if key != "number" && key != "year" {
+			if val == "" {
+				return nil, errors.New("field cannot be empty")
+			}
+		}
+		if key == "number" {
+			if val.(int) < 0 || val.(int) > 799 {
+				return nil, errors.New("number out of range")
+			}
+		}
+		queryString += key + " = @" + key + " AND "
+	}
+	if len(argsMap) > 0 {
+		queryString = queryString[0 : len(queryString)-5]
+	}
+	queryString += " " + clauses
+	subQuery := queryDB.Select("id").Where(queryString, argsMap)
+	return subQuery, nil
+}
+
+//func GetMeetings(argsMap map[string]interface{}, clauses string) ([]Meeting, error) {
+//	var meetings []Meeting
+//	queryDB := DB
+//	queryString := ""
+//	var subQuery *gorm.DB
+//	for key := range argsMap {
+//		if key == "crn" {
+//			subQuery, _ = GetSectionIdSubquery(argsMap, clauses)
+//		}
+//		queryString += key + " = @" + key + " AND "
+//	}
+//	if len(argsMap) > 0 {
+//		queryString = queryString[0 : len(queryString)-5]
+//	}
+//	queryString += " " + clauses
+//	queryDB.Where("section_id=(?)", subQuery).Find(&meetings)
+//	return meetings, nil
+//}
+
+//func GetInstructors(argsMap map[string]interface{}, clauses string) ([]Instructor, error) {
+//	var instructors []Instructor
+//	queryDB := DB
+//	queryString := ""
+//	for key := range argsMap {
+//		queryString += key + " = @" + key + " AND "
+//	}
+//	if len(argsMap) > 0 {
+//		queryString = queryString[0 : len(queryString)-5]
+//	}
+//	queryString += " " + clauses
+//	queryDB.Where(queryString, argsMap).Find(&instructors)
+//	return instructors, nil
+//}
