@@ -67,7 +67,7 @@ type Course struct {
 
 type Section struct {
 	CRN              int            `db:"crn"`
-	SectionNumber    string         `db:"number"`
+	SectionNumber    sql.NullString `db:"number"`
 	StatusCode       string         `db:"status_code"`
 	Description      sql.NullString `db:"description"`
 	PartOfTerm       string         `db:"part_of_term"`
@@ -190,6 +190,34 @@ func CoursesToString(courses []Course) string {
 	return output
 }
 
+func SectionsToString(sections []Section) string {
+	var output string
+	for _, section := range sections {
+		curr_line := "| " + strconv.Itoa(section.CRN) +
+			"\t| " + section.SectionNumber.String +
+			"\t| POT " + section.PartOfTerm +
+			"\t| " + section.EnrollmentStatus
+
+		if section.Description.Valid {
+			curr_line += "\t| " + section.Description.String
+		} else {
+			curr_line += "\t|"
+		}
+
+		// get instructors here, soon
+
+		curr_line += "\n"
+		output += curr_line
+
+		for i := 0; i < len(curr_line); i++ {
+			output += "-"
+		}
+
+		output += "\n"
+	}
+	return output
+}
+
 func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, error) {
 	var sections []Section
 	queryDB := DB
@@ -212,6 +240,28 @@ func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, err
 	subQuery := queryDB.Table("course").Select("id").Where(queryString, argsMap)
 	queryDB.Where("course_id = (?)", subQuery).Find(&sections)
 	return sections, nil
+}
+
+func GetCourseByDatabaseId(databaseId string) ([]Course, error) {
+	var courses []Course
+	queryDB := DB
+
+	queryDB.Where("id= (?)", databaseId).Limit(1).Find(&courses)
+
+	if len(courses) == 0 {
+		return []Course{}, errors.New("could not find course")
+	}
+	return courses, nil
+}
+
+func GetInstructorsBySectionId(sectionId string) ([]Instructor, error) {
+	var instructors []Instructor
+	queryDB := DB
+	subQuery1 := queryDB.Table("Meeting").Select("meeting_id").Where("section_id= (?)", sectionId)
+	subQuery2 := queryDB.Table("Class").Select("instructor_id").Where("meeting_id= (?)", subQuery1)
+	queryDB.Where("instructor_id= (?)", subQuery2).Find(&instructors)
+
+	return instructors, nil
 }
 
 func GetSectionIdSubquery(argsMap map[string]interface{}, clauses string) (*gorm.DB, error) {

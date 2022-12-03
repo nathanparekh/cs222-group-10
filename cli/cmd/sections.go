@@ -47,9 +47,23 @@ func printSections(cmd *cobra.Command, args []string) {
 		crnLookup,
 	)
 	if err != nil {
-		fmt.Println("error while attempting to get subjects")
+		fmt.Println("error while attempting to get section data")
+		return
+	}
+
+	if len(sections) == 0 {
+		fmt.Println("No sections found")
+		return
+	}
+
+	course, err := data.GetCourseByDatabaseId(sections[0].CourseId)
+
+	if err != nil {
+		fmt.Println("error while attempting to get course info")
+		return
 	} else {
-		fmt.Println(sections)
+		fmt.Println(data.CoursesToString(course))
+		fmt.Println(data.SectionsToString(sections))
 	}
 }
 
