@@ -3,10 +3,11 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/CS222-UIUC/course-project-group-10.git/data"
-	"github.com/spf13/cobra"
 	"strconv"
 	"strings"
+
+	"github.com/CS222-UIUC/course-project-group-10.git/data"
+	"github.com/spf13/cobra"
 )
 
 func getSections(args []string, semester string, crn int, useCRN bool) ([]data.Section, error) {
