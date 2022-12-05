@@ -8,23 +8,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getCourse(args []string) (data.Course, error) {
-	if len(args) == 1 { // argument is probably a course name
-		course, err := data.GetCourses(map[string]interface{}{"name": args[0]}, "LIMIT 1")
+func getCourse(args []string) ([]data.Course, error) {
+	if len(args) == 0 {
+	} else if len(args) == 1 { // argument is probably a course name
+		course, err := data.GetCourses(map[string]interface{}{"name": args[0]}, "")
 		if len(course) > 0 {
 			return course[0], err
 		} else {
 			return data.Course{}, err
 		}
 	} else if len(args) == 2 { // argument is probably a course subject and number
-		course, err := data.GetCourses(map[string]interface{}{"subject": args[0], "number": args[1]}, "LIMIT 1")
+		course, err := data.GetCourses(map[string]interface{}{"subject": args[0], "number": args[1]}, "")
 		if len(course) > 0 {
 			return course[0], err
 		} else {
 			return data.Course{}, err
 		}
 	}
-
 	return data.Course{}, errors.New("malformed arguments")
 }
 
