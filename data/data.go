@@ -66,17 +66,17 @@ type Course struct {
 }
 
 type Section struct {
-	Id               int            `db:"id"`
-	CourseId         int            `db:"course_id"`
 	CRN              int            `db:"crn"`
-	SectionNumber    string         `db:"section_number"`
+	Number           sql.NullString `db:"number"`
 	StatusCode       string         `db:"status_code"`
-	SectStatusCode   string         `db:"sect_status_code"`
+	Description      sql.NullString `db:"description"`
 	PartOfTerm       string         `db:"part_of_term"`
+	SectStatusCode   string         `db:"sect_status_code"`
 	EnrollmentStatus string         `db:"enrollment_status"`
 	StartDate        string         `db:"start_date"`
 	EndDate          string         `db:"end_date"`
-	Description      sql.NullString `db:"description"`
+	Id               string         `db:"id"`
+	CourseId         string         `db:"course_id"`
 }
 
 type Meeting struct {
@@ -190,6 +190,34 @@ func CoursesToString(courses []Course) string {
 	return output
 }
 
+func SectionsToString(sections []Section) string {
+	var output string
+	for _, section := range sections {
+		curr_line := "| " + strconv.Itoa(section.CRN) +
+			"\t| " + section.Number.String +
+			"\t| POT " + section.PartOfTerm +
+			"\t| " + section.EnrollmentStatus
+
+		if section.Description.Valid {
+			curr_line += "\t| " + section.Description.String
+		} else {
+			curr_line += "\t|"
+		}
+
+		// get instructors here, soon
+
+		curr_line += "\n"
+		output += curr_line
+
+		for i := 0; i < len(curr_line); i++ {
+			output += "-"
+		}
+
+		output += "\n"
+	}
+	return output
+}
+
 func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, error) {
 	var sections []Section
 	queryDB := DB
@@ -209,6 +237,87 @@ func GetSections(argsMap map[string]interface{}, clauses string) ([]Section, err
 	}
 	// append any additional clauses to the end of query
 	queryString += " " + clauses
-	queryDB.Where(queryString, argsMap).Find(&sections)
+	subQuery := queryDB.Table("course").Select("id").Where(queryString, argsMap)
+	queryDB.Where("course_id = (?)", subQuery).Find(&sections)
 	return sections, nil
 }
+
+func GetCourseByDatabaseId(databaseId string) ([]Course, error) {
+	var courses []Course
+	queryDB := DB
+
+	queryDB.Where("id= (?)", databaseId).Limit(1).Find(&courses)
+
+	if len(courses) == 0 {
+		return []Course{}, errors.New("could not find course")
+	}
+	return courses, nil
+}
+
+func GetInstructorsBySectionId(sectionId string) ([]Instructor, error) {
+	var instructors []Instructor
+	queryDB := DB
+	subQuery1 := queryDB.Table("Meeting").Select("meeting_id").Where("section_id= (?)", sectionId)
+	subQuery2 := queryDB.Table("Class").Select("instructor_id").Where("meeting_id= (?)", subQuery1)
+	queryDB.Where("instructor_id= (?)", subQuery2).Find(&instructors)
+
+	return instructors, nil
+}
+
+func GetSectionIdSubquery(argsMap map[string]interface{}, clauses string) (*gorm.DB, error) {
+	queryDB := DB.Session(&gorm.Session{})
+	queryString := ""
+	for key, val := range argsMap {
+		if key != "number" && key != "year" {
+			if val == "" {
+				return nil, errors.New("field cannot be empty")
+			}
+		}
+		if key == "number" {
+			if val.(int) < 0 || val.(int) > 799 {
+				return nil, errors.New("number out of range")
+			}
+		}
+		queryString += key + " = @" + key + " AND "
+	}
+	if len(argsMap) > 0 {
+		queryString = queryString[0 : len(queryString)-5]
+	}
+	queryString += " " + clauses
+	subQuery := queryDB.Select("id").Where(queryString, argsMap)
+	return subQuery, nil
+}
+
+//func GetMeetings(argsMap map[string]interface{}, clauses string) ([]Meeting, error) {
+//	var meetings []Meeting
+//	queryDB := DB
+//	queryString := ""
+//	var subQuery *gorm.DB
+//	for key := range argsMap {
+//		if key == "crn" {
+//			subQuery, _ = GetSectionIdSubquery(argsMap, clauses)
+//		}
+//		queryString += key + " = @" + key + " AND "
+//	}
+//	if len(argsMap) > 0 {
+//		queryString = queryString[0 : len(queryString)-5]
+//	}
+//	queryString += " " + clauses
+//	queryDB.Where("section_id=(?)", subQuery).Find(&meetings)
+//	return meetings, nil
+//}
+
+//func GetInstructors(argsMap map[string]interface{}, clauses string) ([]Instructor, error) {
+//	var instructors []Instructor
+//	queryDB := DB
+//	queryString := ""
+//	for key := range argsMap {
+//		queryString += key + " = @" + key + " AND "
+//	}
+//	if len(argsMap) > 0 {
+//		queryString = queryString[0 : len(queryString)-5]
+//	}
+//	queryString += " " + clauses
+//	queryDB.Where(queryString, argsMap).Find(&instructors)
+//	return instructors, nil
+//}
