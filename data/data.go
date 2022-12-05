@@ -67,7 +67,7 @@ type Course struct {
 
 type Section struct {
 	CRN              int            `db:"crn"`
-	SectionNumber    sql.NullString `db:"number"`
+	Number           sql.NullString `db:"number"`
 	StatusCode       string         `db:"status_code"`
 	Description      sql.NullString `db:"description"`
 	PartOfTerm       string         `db:"part_of_term"`
@@ -194,7 +194,7 @@ func SectionsToString(sections []Section) string {
 	var output string
 	for _, section := range sections {
 		curr_line := "| " + strconv.Itoa(section.CRN) +
-			"\t| " + section.SectionNumber.String +
+			"\t| " + section.Number.String +
 			"\t| POT " + section.PartOfTerm +
 			"\t| " + section.EnrollmentStatus
 
