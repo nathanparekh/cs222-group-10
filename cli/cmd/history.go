@@ -31,7 +31,7 @@ func historyFunc(cmd *cobra.Command, args []string) {
 	}
 
 	// initalize argsMap used by the getters
-	argsMap := map[string]interface{}{"subject": course[0].Subject, "number": course[0].Number}
+	argsMap := map[string]interface{}{"subject": course.Subject, "number": course.Number}
 
 	// print depending on flags
 	if (latest || oldest) && num != -1 {
