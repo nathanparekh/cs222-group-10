@@ -100,7 +100,7 @@ def make_gpa_table(connection, file_name):
     df.insert(1, 'instructor_id', 'None')
     for idx, row in df.iterrows():
         if row.Year >= 2020:  # the oldest data in course.db is from 2020
-            courses = pd.read_sql('SELECT * FROM Course WHERE year="{}" AND term="{}" AND subject="{}" AND number="{}" LIMIT 1'.format(
+            courses = pd.read_sql('SELECT id FROM Course WHERE year="{}" AND term="{}" AND subject="{}" AND number="{}" LIMIT 1'.format(
                 row.Year, row.Term, row.Subject, row.Number), connection)
 
             if len(courses) > 0:
@@ -111,11 +111,11 @@ def make_gpa_table(connection, file_name):
                 continue  # most likely means instructor field for this row of the CSV is blank
 
             names = row['Primary Instructor'].split(',')
-            first_name = names[1].strip()[0]
+            first_initial = names[1].strip()[0]
             last_name = names[0].strip()
 
             instrs = pd.read_sql('SELECT id FROM Instructor WHERE first_name="{}" AND last_name="{}" LIMIT 1'.format(
-                first_name, last_name), connection)
+                first_initial, last_name), connection)
 
             if len(instrs) > 0:
                 df.at[idx, 'instructor_id'] = instrs.iloc[0].id

@@ -8,8 +8,6 @@ import (
 	"strconv"
 
 	"github.com/CS222-UIUC/course-project-group-10.git/data"
-
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +31,7 @@ func historyFunc(cmd *cobra.Command, args []string) {
 	}
 
 	// initalize argsMap used by the getters
-	argsMap := map[string]interface{}{"subject": course[0].Subject, "number": course[0].Number}
+	argsMap := map[string]interface{}{"subject": course.Subject, "number": course.Number}
 
 	// print depending on flags
 	if (latest || oldest) && num != -1 {
