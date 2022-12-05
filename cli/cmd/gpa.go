@@ -11,7 +11,7 @@ import (
 )
 
 func gpaFunc(cmd *cobra.Command, args []string) {
-	courses, err := getCourse(args)
+	courses, err := getCourses(args)
 	if err != nil {
 		fmt.Println("Error getting course:", err)
 		fmt.Println("Usage:")

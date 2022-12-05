@@ -50,7 +50,6 @@ func getCoursePrereqs(course data.Course, courseToPrereqs *map[data.Course][]dat
 		// naively validate subject & courseNum (by their lengths)
 		if (len(subject) <= 4 && len(subject) >= 2) && len(courseNum) == 3 {
 			prereq, err := getCourse([]string{subject, courseNum})
-
 			if err == nil && prereq != (data.Course{}) {
 				// subject & courseNum are valid & represent a course
 				(*courseToPrereqs)[course] = append((*courseToPrereqs)[course], prereq)
