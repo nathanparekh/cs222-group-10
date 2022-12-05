@@ -198,11 +198,11 @@ func SectionsToString(sections []Section) string {
 			"\t| POT " + section.PartOfTerm +
 			"\t| " + section.EnrollmentStatus
 
-		if section.Description.Valid {
-			curr_line += "\t| " + section.Description.String
-		} else {
-			curr_line += "\t|"
-		}
+		//if section.Description.Valid {
+		//	curr_line += "\t| " + section.Description.String
+		//} else {
+		//	curr_line += "\t|"
+		//}
 
 		// get instructors here, soon
 
