@@ -434,4 +434,3 @@ func GetSectionIdSubquery(argsMap map[string]interface{}, clauses string) (*gorm
 //	queryDB.Where(queryString, argsMap).Find(&instructors)
 //	return instructors, nil
 //}
-
